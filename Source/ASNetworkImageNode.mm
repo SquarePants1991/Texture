@@ -587,11 +587,15 @@
       ASDN::MutexLocker l(__instanceLock__);
       urls = _URLs;
     }
-
+    
+    __weak ASNetworkImageNode * _weak_self = self;
     if (_downloaderFlags.downloaderImplementsDownloadURLs) {
       downloadIdentifier = [_downloader downloadImageWithURLs:urls
                                                 callbackQueue:dispatch_get_main_queue()
-                                             downloadProgress:NULL
+                                             downloadProgress:^(CGFloat progress) {
+                                               __strong ASNetworkImageNode * _strong_self = _weak_self;
+                                               [_strong_self.delegate imageNode:_strong_self progress: progress];
+                                             }
                                                    completion:^(id <ASImageContainerProtocol> _Nullable imageContainer, NSError * _Nullable error, id  _Nullable downloadIdentifier) {
                                                      if (finished != NULL) {
                                                        finished(imageContainer, error, downloadIdentifier);
@@ -600,7 +604,10 @@
     } else {
       downloadIdentifier = [_downloader downloadImageWithURL:[urls lastObject]
                                                callbackQueue:dispatch_get_main_queue()
-                                            downloadProgress:NULL
+                                            downloadProgress:^(CGFloat progress) {
+                                              __strong ASNetworkImageNode * _strong_self = _weak_self;
+                                              [_strong_self.delegate imageNode:_strong_self progress: progress];
+                                            }
                                                   completion:^(id <ASImageContainerProtocol> _Nullable imageContainer, NSError * _Nullable error, id  _Nullable downloadIdentifier) {
                                                     if (finished != NULL) {
                                                       finished(imageContainer, error, downloadIdentifier);

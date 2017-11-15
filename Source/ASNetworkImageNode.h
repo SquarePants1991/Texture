@@ -175,6 +175,16 @@ typedef struct {
 - (void)imageNode:(ASNetworkImageNode *)imageNode didLoadImage:(UIImage *)image;
 
 /**
+ * Notification of the image download progress.
+ *
+ * @param imageNode The sender.
+ * @param image load progress
+ *
+ * @discussion Called on a background queue.
+ */
+- (void)imageNode:(ASNetworkImageNode *)imageNode progress:(CGFloat)progress;
+
+/**
  * Notification that the image node started to load
  *
  * @param imageNode The sender.
